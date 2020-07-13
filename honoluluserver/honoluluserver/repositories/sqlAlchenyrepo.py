@@ -94,19 +94,20 @@ class SQLiteRepo:
 
         self.engine=create_engine('sqlite:///honoluluserver/repositories/hawaii.sqlite')
 
-        reference = actions_per_route[route]
+        reference = actions_per_route[route].copy()
 
         ref = None
         if route == 'range':
             reference['Query'] = reference['Query'].format(f"'{filters['start']}'", f"'{filters['end']}'")
             ref = 1
         elif route == 'start':
-            reference['Query'] = reference['Query'].format(f"{filters['start']}")
+            reference['Query'] = reference['Query'].format(f"'{filters['start']}'")
             ref = 1
 
-        lista = self.runQuery(reference["Query"]).describe();
-
-        print(lista)
+        if ref is None:
+            lista = self.runQuery(reference["Query"])
+        else:
+            lista = self.runQuery(reference["Query"]).describe()
 
         result = json.loads(lista.to_json(orient='records' if ref == None else 'index'))
 

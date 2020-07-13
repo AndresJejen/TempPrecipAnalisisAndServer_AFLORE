@@ -42,7 +42,6 @@ station3_dict = {
 
 @blueprint.route('/api/v1.0/<start>', methods=['GET'])
 def temp_range_start(start):
-    print(start)
     request_object = req.StationListRequestObject.from_dict({})
 
     repo = sql.SQLiteRepo()
@@ -56,7 +55,6 @@ def temp_range_start(start):
 
 @blueprint.route('/api/v1.0/<start>/<end>', methods=['GET'])
 def temp_range(start, end):
-    print(start, end)
     request_object = req.StationListRequestObject.from_dict({})
 
     repo = sql.SQLiteRepo()
