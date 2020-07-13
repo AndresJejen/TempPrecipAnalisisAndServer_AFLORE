@@ -6,8 +6,10 @@ from honoluluserver.repositories import memrepo as mr
 from honoluluserver.repositories import sqlAlchenyrepo as sql
 from honoluluserver.use_cases import station_use_case as uc
 from honoluluserver.use_cases import measurement_use_case as muc
+from honoluluserver.use_cases import analitics_use_case as auc
 from honoluluserver.serializers import station_serializer as ser
 from honoluluserver.serializers import measurement_serializer as mser
+from honoluluserver.serializers import analitics_serializer as aser
 
 blueprint = Blueprint('hololuluwheather', __name__)
 
@@ -37,6 +39,34 @@ station3_dict = {
             'latitude': 51.77436293,
             'elevation': 125
         }
+
+@blueprint.route('/api/v1.0/<start>', methods=['GET'])
+def temp_range_start(start):
+    print(start)
+    request_object = req.StationListRequestObject.from_dict({})
+
+    repo = sql.SQLiteRepo()
+    use_case = auc.AnaliticsListUseCase(repo, start, route="start")
+
+    response = use_case.execute(request_object)
+
+    return Response(json.dumps(response.value, cls=aser.AnaliticsEncoder),
+                    mimetype='application/json',
+                    status=200)
+
+@blueprint.route('/api/v1.0/<start>/<end>', methods=['GET'])
+def temp_range(start, end):
+    print(start, end)
+    request_object = req.StationListRequestObject.from_dict({})
+
+    repo = sql.SQLiteRepo()
+    use_case = auc.AnaliticsListUseCase(repo, start, end=end, route="range")
+
+    response = use_case.execute(request_object)
+
+    return Response(json.dumps(response.value, cls=aser.AnaliticsEncoder),
+                    mimetype='application/json',
+                    status=200)
 
 @blueprint.route('/api/v1.0/stations', methods=['GET'])
 def stations():

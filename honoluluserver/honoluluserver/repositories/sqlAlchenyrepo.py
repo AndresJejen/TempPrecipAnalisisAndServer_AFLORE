@@ -1,5 +1,6 @@
 from honoluluserver.domain import station as st
 from honoluluserver.domain import measurement as ms
+from honoluluserver.domain import analitics
 
 from sqlalchemy import create_engine, text
 import pandas as pd
@@ -38,6 +39,26 @@ actions_per_route = {
             )
         """,
         "Data": ms.Measurement
+    },
+    "start": {
+        "Query": """
+            select ms.date as date, ms.tobs as tobs from 
+            measurement as ms
+            where 
+            ms.date >= {0}
+        """,
+        "Data": analitics.Analitics
+    },
+    "range": {
+        "Query": """
+            select ms.date as date, ms.tobs as tobs from 
+            measurement as ms
+            where 
+            ms.date >= {0}
+            and
+            ms.date <= {1}
+        """,
+        "Data": analitics.Analitics
     }
 }
 
@@ -75,8 +96,21 @@ class SQLiteRepo:
 
         reference = actions_per_route[route]
 
-        lista = self.runQuery(reference["Query"]);
+        ref = None
+        if route == 'range':
+            reference['Query'] = reference['Query'].format(f"'{filters['start']}'", f"'{filters['end']}'")
+            ref = 1
+        elif route == 'start':
+            reference['Query'] = reference['Query'].format(f"{filters['start']}")
+            ref = 1
 
-        result = json.loads(lista.to_json(orient='records'))
+        lista = self.runQuery(reference["Query"]).describe();
 
-        return [reference["Data"].from_dict(r) for r in result]
+        print(lista)
+
+        result = json.loads(lista.to_json(orient='records' if ref == None else 'index'))
+
+        if ref is None:
+            return [reference["Data"].from_dict(r) for r in result]
+        else:
+            return reference["Data"].from_dict(result)
