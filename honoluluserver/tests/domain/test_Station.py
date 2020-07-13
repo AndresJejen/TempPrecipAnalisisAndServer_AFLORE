@@ -2,7 +2,7 @@ from honoluluserver.domain.station import Station
 
 
 def test_station_model_init():
-    measurement = Station(
+    station = Station(
         "Station1",
         "Station1Name",
         3,
@@ -10,9 +10,9 @@ def test_station_model_init():
         55
     )
 
-    assert measurement.station == "Station1"
-    assert measurement.name == "Station1Name"
-    assert measurement.latitude == 3
-    assert measurement.longitude == 5
-    assert measurement.elevation == 55
+    assert station.station == "Station1"
+    assert station.name == "Station1Name"
+    assert station.latitude == 3
+    assert station.longitude == 5
+    assert station.elevation == 55
     
