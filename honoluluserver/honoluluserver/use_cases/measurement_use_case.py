@@ -1,7 +1,7 @@
 from honoluluserver.shared import response_object as res
 
 
-class StationListUseCase(object):
+class MeasurementListUseCase(object):
 
     def __init__(self, repo, route="station"):
         self.repo = repo

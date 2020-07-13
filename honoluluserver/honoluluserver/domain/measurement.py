@@ -1,5 +1,11 @@
 from honoluluserver.shared.domain_model import DomainModel
 
+def select_field(field, dictionary):
+        if field in dictionary:
+            return dictionary[field]
+        else:
+            return None
+
 class Measurement():
     """
     Domain Model for measurement table
@@ -28,6 +34,18 @@ class Measurement():
             'prcp': self.prcp,
             'tobs': self.tobs,
         }
+    
+    @classmethod
+    def from_dict(cls, adict):
+        measurement = Measurement(
+            id = select_field('id', adict),
+            station= select_field('station', adict),
+            date= select_field('date', adict),
+            prcp= select_field('prcp', adict),
+            tobs= select_field('tobs', adict),
+        )
+
+        return measurement
 
     def __eq__(self, other):
         return self.to_dict() == other.to_dict()

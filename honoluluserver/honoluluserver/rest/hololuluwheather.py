@@ -3,8 +3,11 @@ from flask import Blueprint, Response
 
 from honoluluserver.use_cases import request_objects as req
 from honoluluserver.repositories import memrepo as mr
+from honoluluserver.repositories import sqlAlchenyrepo as sql
 from honoluluserver.use_cases import station_use_case as uc
+from honoluluserver.use_cases import measurement_use_case as muc
 from honoluluserver.serializers import station_serializer as ser
+from honoluluserver.serializers import measurement_serializer as mser
 
 blueprint = Blueprint('hololuluwheather', __name__)
 
@@ -35,15 +38,55 @@ station3_dict = {
             'elevation': 125
         }
 
-@blueprint.route('/stations', methods=['GET'])
+@blueprint.route('/api/v1.0/stations', methods=['GET'])
 def stations():
     request_object = req.StationListRequestObject.from_dict({})
 
-    repo = mr.MemRepo([station1_dict, station2_dict, station3_dict])
+    repo = sql.SQLiteRepo()
     use_case = uc.StationListUseCase(repo)
 
     response = use_case.execute(request_object)
 
     return Response(json.dumps(response.value, cls=ser.StationEncoder),
+                    mimetype='application/json',
+                    status=200)
+
+@blueprint.route('/api/v1.0/precipitation', methods=['GET'])
+def precipitation():
+    request_object = req.StationListRequestObject.from_dict({})
+
+    repo = sql.SQLiteRepo()
+    use_case = muc.MeasurementListUseCase(repo, "precipitation")
+
+    response = use_case.execute(request_object)
+
+    return Response(json.dumps(response.value, cls=mser.MeasurementEncoder),
+                    mimetype='application/json',
+                    status=200)
+
+@blueprint.route('/api/v1.0/tobs', methods=['GET'])
+def tobs():
+    request_object = req.StationListRequestObject.from_dict({})
+
+    repo = sql.SQLiteRepo()
+    use_case = muc.MeasurementListUseCase(repo, "tobs")
+
+    response = use_case.execute(request_object)
+
+    return Response(json.dumps(response.value, cls=mser.MeasurementEncoder),
+                    mimetype='application/json',
+                    status=200)
+
+
+@blueprint.route('/', methods=['GET'])
+def root():
+    response = {
+        "/": "Shows all the available routes",
+        "/api/v1.0/precipitation": "Shows all the precitation data from measures table last 12 months",
+        "/api/v1.0/stations": "Shows all the stations",
+        "/api/v1.0/tobs": "Shows all the temperatures for the last 12 months",
+    }
+    
+    return Response(json.dumps(response),
                     mimetype='application/json',
                     status=200)

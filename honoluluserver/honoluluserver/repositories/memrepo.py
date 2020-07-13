@@ -26,7 +26,7 @@ class MemRepo:
 
         return getattr(element[key], operator)(value)
 
-    def list(self, filters=None):
+    def list(self, filters=None, route="station"):
         if not filters:
             result = self._entries
         else:
