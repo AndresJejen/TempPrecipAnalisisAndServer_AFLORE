@@ -25,3 +25,6 @@ pip install -r requirements.txt
 
 # Author
 Andres Jejen Cortes [@andres_jejen on twitter](https://twitter.com/andres_jejen)
+
+# Internet Sources
+1. [Clean Architecture with python](https://www.thedigitalcatonline.com/blog/2016/11/14/clean-architectures-in-python-a-step-by-step-example/#requests-and-responses)
