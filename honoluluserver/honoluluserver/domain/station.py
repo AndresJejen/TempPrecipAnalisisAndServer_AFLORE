@@ -21,6 +21,19 @@ class Station():
         self.longitude = longitude
         self.elevation = elevation
 
+    @classmethod
+    def from_dict(cls, adict):
+        room = Station(
+            id=adict['id'],
+            station=adict['station'],
+            name=adict['name'],
+            latitude=adict['latitude'],
+            longitude=adict['longitude'],
+            elevation=adict['elevation']
+        )
+
+        return room
+
     def to_dict(self):
         return {
             'id': self.id,
